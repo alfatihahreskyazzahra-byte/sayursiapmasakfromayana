@@ -1,0 +1,57 @@
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#f6f9f3;padding-bottom:90px;color:#0f2a1a}
+.header{background:#0f6d3a;color:white;padding:14px 14px 20px;border-radius:0 0 24px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo-area{display:flex;gap:10px;align-items:center}
+.logo-box{width:52px;height:52px;background:white;border-radius:14px;display:grid;place-items:center;font-size:28px}
+.brand h1{font-size:18px;font-weight:800}.brand p{font-size:11px;opacity:.85;font-style:italic}
+.banner{background:#fffbeb;margin:12px;border-radius:20px;padding:14px;display:flex;justify-content:space-between;border:1px solid #e7f5d0}
+.banner h2 span{color:#0f6d3a}.badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.badges span{background:white;border-radius:20px;padding:4px 8px;font-size:10px;font-weight:700;border:1px solid #dcfce7}
+.search{margin:12px;background:white;border-radius:50px;padding:11px 16px;display:flex;gap:10px}
+.search input{border:none;outline:none;width:100%}
+.cats{display:flex;gap:12px;overflow-x:auto;padding:0 12px 6px}.cat{min-width:70px;text-align:center;cursor:pointer}
+.cat-icon{width:70px;height:70px;background:#e8f5e9;border-radius:20px;display:grid;place-items:center;font-size:28px}
+.section-head{display:flex;justify-content:space-between;padding:14px 12px 8px}.section-head a{color:#0f6d3a;font-size:12px;font-weight:700;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
+.card{background:white;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);border:1px solid #eef6e8}
+.card-img{height:100px;background:linear-gradient(135deg,#e8f5e9,#fef9c3);display:grid;place-items:center;font-size:36px;position:relative}
+.badge-kat{position:absolute;top:7px;left:7px;background:#0f6d3a;color:white;font-size:9px;font-weight:800;padding:4px 8px;border-radius:20px}
+.card-body{padding:10px}
+.nama-produk{font-size:13px;font-weight:800;color:#0f2a1a;text-transform:uppercase}
+.bahan-singkat{font-size:12px;color:#64748b;margin:2px 0 6px 0}
+.price{color:#0f6d3a;font-weight:800;font-size:15px;margin:4px 0}
+.btn-pesan{width:100%;background:#0f6d3a;color:white;border:none;border-radius:50px;padding:10px;margin-top:8px;font-weight:700;font-size:13px;cursor:pointer}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;padding:7px 0 11px;z-index:90}
+.nav{text-align:center;color:#94a3b8;font-size:10px;position:relative;cursor:pointer}.nav.active{color:#0f6d3a}
+.cart-badge{position:absolute;top:-4px;right:6px;background:#ef4444;color:white;font-size:9px;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-weight:800}
+.page{display:none;padding:14px}.page-title{color:#0f6d3a;margin-bottom:12px}
+.cart-item{background:white;border-radius:14px;padding:12px;display:flex;gap:10px;margin-bottom:10px;align-items:center}
+.total-box{background:#0f6d3a;color:white;border-radius:18px;padding:16px;margin-top:14px}
+.total-row{display:flex;justify-content:space-between}
+.btn-wa{width:100%;background:white;color:#0f6d3a;border:none;padding:12px;border-radius:50px;font-weight:800;margin-top:10px;cursor:pointer}
+.btn-outline{width:100%;background:transparent;color:white;border:1px solid white;padding:10px;border-radius:50px;margin-top:8px;cursor:pointer}
+/* STRUK */
+#strukModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;padding:16px;overflow:auto}
+.struk-kertas{background:white;max-width:380px;margin:20px auto;border-radius:18px;padding:18px;font-family:monospace;color:#111}
+.struk-head{text-align:center;border-bottom:2px dashed #0f6d3a;padding-bottom:10px;margin-bottom:10px}
+.struk-kertas input{width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px}
+.struk-total{border-top:2px dashed #0f6d3a;padding-top:10px;display:flex;justify-content:space-between;font-weight:900;margin-top:10px}
+.btn-wa-dark{width:100%;background:#0f6d3a;color:white;border:0;padding:14px;border-radius:12px;font-weight:800;margin-top:14px;cursor:pointer}
+.btn-download{width:100%;background:#f1f5f9;border:1px solid #e2e8f0;padding:10px;border-radius:12px;margin-top:8px;cursor:pointer}
+.btn-tutup{width:100%;background:transparent;border:0;color:#94a3b8;padding:10px;margin-top:4px;cursor:pointer}
+
+/* KATEGORI AKTIF - SIMPLE HIJAU SAJA */
+.cat{
+  transition: all 0.2s ease;
+}
+.cat.active .cat-icon{
+  background: #0f6d3a !important;
+}
+.cat.active p{
+  color: #0f6d3a !important;
+  font-weight: 800 !important;
+}
+.card-img{overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.admin-fab{position:fixed;bottom:90px;right:16px;background:#0f6d3a;color:white;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:95;cursor:pointer}
+.card-img{height:100px;overflow:hidden;position:relative}
+.card-img img{width:100%;height:100%;object-fit:cover}

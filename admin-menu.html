@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Menu - SayurSiapMasak</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding:16px;background:#f6f9f3;font-family:sans-serif}
+.box{background:white;border-radius:18px;padding:16px;margin-bottom:14px;border:1px solid #eef6e8}
+.box h3{color:#0f6d3a;margin-bottom:8px}
+.box input,.box select,.box textarea{width:100%;padding:11px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:10px}
+.preview{width:100%;height:160px;background:#f1f5f9;border-radius:12px;display:grid;place-items:center;overflow:hidden;margin-bottom:10px;font-size:12px;color:#94a3b8}
+.preview img{width:100%;height:100%;object-fit:cover}
+.grid-admin{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card-admin{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:white;position:relative}
+.card-admin img{width:100%;height:90px;object-fit:cover;background:#f8fafc}
+.card-admin div{padding:8px;font-size:12px}
+.btn-hapus{width:100%;background:#ef4444;color:white;border:0;padding:6px;border-radius:0 0 8px 8px;font-size:11px;cursor:pointer;font-weight:bold}
+.btn-hapus:hover{background:#dc2626}
+</style>
+</head>
+<body>
+<h2 style="color:#0f6d3a">🥬 Admin Menu</h2>
+<p style="font-size:12px;color:#64748b">Ganti foto = otomatis ganti di aplikasi. Tambah menu baru = langsung muncul di toko.</p>
+
+<div class="box">
+  <h3>1. Ganti Foto Menu Lama (Otomatis)</h3>
+  <select id="pilihProduk"></select>
+  <input type="file" id="fotoGanti" accept="image/*" onchange="preview(event,'prev1')">
+  <div class="preview" id="prev1">Preview foto baru</div>
+  <button class="btn-pesan" onclick="gantiFoto()">💾 Simpan Foto Baru</button>
+  <small style="font-size:11px;color:#64748b">Tip permanen: upload juga file <b id="namaFileTip">sayur-bening.jpg</b> ke folder <b>uploads/</b> di hosting</small>
+</div>
+
+<div class="box">
+  <h3>2. Tambah Menu Baru</h3>
+  <input id="nama" placeholder="NAMA MENU - CONTOH: SOP CAKAR">
+  <input id="tampil" placeholder="Tampil singkat - Contoh: Cakar, Kentang">
+  <textarea id="gram" placeholder="Komposisi gram rahasia (untuk Google Sheet)"></textarea>
+  <div style="display:flex;gap:8px"><input id="hpp" type="number" placeholder="HPP"><input id="harga" type="number" placeholder="Harga Jual"></div>
+  <select id="kat"><option>Sayur Daun</option><option>Sayur Buah</option><option>Paket Siap Masak</option><option>Bumbu Dapur</option><option>Paket Harian</option></select>
+  <input type="file" id="fotoBaru" accept="image/*" onchange="preview(event,'prev2')">
+  <div class="preview" id="prev2">Preview foto menu baru</div>
+  <button class="btn-pesan" onclick="tambahMenu()">+ Tambah Menu</button>
+</div>
+
+<div class="box">
+  <h3>Daftar Menu Saat Ini</h3>
+  <div class="grid-admin" id="listMenu"></div>
+  <button onclick="exportData()" style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:1px solid #e2e8f0;background:#f1f5f9">📥 Download data.js Baru (untuk hosting)</button>
+  <a href="index.html" style="display:block;text-align:center;margin-top:10px;color:#0f6d3a;font-size:12px">← Kembali ke Toko</a>
+  <a href="admin.html" style="display:block;text-align:center;margin-top:6px;color:#64748b;font-size:12px">Ke Admin Struk →</a>
+</div>
+
+<script src="data.js"></script>
+<script>
+function slug(n){return n.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');}
+function preview(e,id){let f=e.target.files[0];if(f){document.getElementById(id).innerHTML=`<img src="${URL.createObjectURL(f)}">`;}}
+
+function getAll(){
+  let tambahan=JSON.parse(localStorage.getItem('produk_tambahan')||'[]');
+  let terhapus=JSON.parse(localStorage.getItem('produk_terhapus')||'[]');
+  let all=[...PRODUK,...tambahan];
+  // filter yang sudah dihapus
+  return all.filter(p=>!terhapus.includes(slug(p.nama)));
+}
+
+let pilih=document.getElementById('pilihProduk');
+PRODUK.forEach(p=>{let o=document.createElement('option');o.value=p.nama;o.textContent=p.nama;pilih.appendChild(o);});
+pilih.addEventListener('change',()=>{document.getElementById('namaFileTip').innerText=slug(pilih.value)+'.jpg'});
+
+function renderList(){
+  let tambahan=JSON.parse(localStorage.getItem('produk_tambahan')||'[]');
+  let terhapus=JSON.parse(localStorage.getItem('produk_terhapus')||'[]');
+  let all=[...PRODUK,...tambahan].filter(p=>!terhapus.includes(slug(p.nama)));
+
+  document.getElementById('listMenu').innerHTML=all.slice(-20).reverse().map(p=>{
+    let s=slug(p.nama);
+    let foto=localStorage.getItem('foto_'+s);
+    let src=foto?foto:`uploads/${s}.jpg`;
+    return `<div class="card-admin">
+      <img src="${src}" onerror="this.style.display='none'">
+      <div><b>${p.nama}</b><br>Rp ${p.harga.toLocaleString()}<br><small>${s}.jpg</small></div>
+      <button class="btn-hapus" onclick="hapusMenu('${p.nama.replace(/'/g,"\\'")}')">🗑️ HAPUS MENU INI</button>
+    </div>`;
+  }).join('');
+}
+renderList();
+document.getElementById('namaFileTip').innerText=slug(pilih.value)+'.jpg';
+
+function gantiFoto(){
+  let nama=pilih.value; let file=document.getElementById('fotoGanti').files[0];
+  if(!file) return alert('Pilih foto dulu');
+  let r=new FileReader(); r.onload=ev=>{
+    localStorage.setItem('foto_'+slug(nama),ev.target.result);
+    alert('Foto '+nama+' berhasil! Buka index.html sekarang, foto sudah ganti otomatis.');
+    renderList();
+  }; r.readAsDataURL(file);
+}
+
+function tambahMenu(){
+  let nama=document.getElementById('nama').value.toUpperCase().trim();
+  let tampil=document.getElementById('tampil').value.trim();
+  let gram=document.getElementById('gram').value.trim();
+  let hpp=parseInt(document.getElementById('hpp').value)||0;
+  let harga=parseInt(document.getElementById('harga').value)||0;
+  let kat=document.getElementById('kat').value;
+  let file=document.getElementById('fotoBaru').files[0];
+  if(!nama||!harga) return alert('Nama & Harga wajib');
+  let id=Date.now();
+  let save=(fotoBase64)=>{
+    if(fotoBase64) localStorage.setItem('foto_'+slug(nama),fotoBase64);
+    let tambahan=JSON.parse(localStorage.getItem('produk_tambahan')||'[]');
+    tambahan.push({id,nama,tampil,gram,hpp,harga,kat});
+    localStorage.setItem('produk_tambahan',JSON.stringify(tambahan));
+    alert('Menu '+nama+' ditambahkan! Cek index.html');
+    renderList();
+    document.getElementById('nama').value='';
+    document.getElementById('harga').value='';
+  };
+  if(file){let r=new FileReader();r.onload=ev=>save(ev.target.result);r.readAsDataURL(file);} else save(null);
+}
+
+// === FUNGSI HAPUS BARU PAK ===
+function hapusMenu(nama){
+  if(!confirm('Yakin HAPUS menu "'+nama+'" pak?\n\nMenu akan hilang dari aplikasi pelanggan.')) return;
+
+  let s=slug(nama);
+  // 1. Hapus foto
+  localStorage.removeItem('foto_'+s);
+  
+  // 2. Hapus dari tambahan jika ada
+  let tambahan=JSON.parse(localStorage.getItem('produk_tambahan')||'[]');
+  let tambahanBaru=tambahan.filter(p=>slug(p.nama)!==s);
+  localStorage.setItem('produk_tambahan', JSON.stringify(tambahanBaru));
+
+  // 3. Jika menu asli PRODUK, masukkan ke daftar terhapus
+  let isAsli=PRODUK.some(p=>slug(p.nama)===s);
+  if(isAsli){
+    let terhapus=JSON.parse(localStorage.getItem('produk_terhapus')||'[]');
+    if(!terhapus.includes(s)) terhapus.push(s);
+    localStorage.setItem('produk_terhapus', JSON.stringify(terhapus));
+  }
+
+  alert('Menu '+nama+' berhasil dihapus!');
+  renderList();
+}
+
+function exportData(){
+  let tambahan=JSON.parse(localStorage.getItem('produk_tambahan')||'[]');
+  let terhapus=JSON.parse(localStorage.getItem('produk_terhapus')||'[]');
+  let gabung=[...PRODUK,...tambahan].filter(p=>!terhapus.includes(slug(p.nama)));
+  let teks=`const WA_NUMBER = "${WA_NUMBER}";\nconst SHEET_URL = "${SHEET_URL}";\n\nconst PRODUK = ${JSON.stringify(gabung,null,2)};\n\nconst EMOJI = ${JSON.stringify(EMOJI,null,2)};\nconst KATEGORI = ${JSON.stringify(KATEGORI,null,2)};`;
+  let blob=new Blob([teks],{type:'text/javascript'}); let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='data.js';a.click();
+}
+</script>
+</body>
+</html>
